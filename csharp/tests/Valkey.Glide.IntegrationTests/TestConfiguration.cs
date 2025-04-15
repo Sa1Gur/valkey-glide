@@ -3,8 +3,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-using Microsoft.VisualStudio.TestPlatform.Utilities;
-
 using Valkey.Glide.IntegrationTests;
 
 using static Valkey.Glide.ConnectionConfiguration;

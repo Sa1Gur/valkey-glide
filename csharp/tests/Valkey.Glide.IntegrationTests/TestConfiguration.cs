@@ -28,8 +28,8 @@ public class TestConfiguration : IDisposable
             .WithAddress(CLUSTER_HOSTS[0].host, CLUSTER_HOSTS[0].port)
             .WithRequestTimeout(10000);
 
-    public static GlideClient DefaultStandaloneClient() => new(DefaultClientConfig().Build());
-    public static GlideClusterClient DefaultClusterClient() => new(DefaultClusterClientConfig().Build());
+    public static GlideClient DefaultStandaloneClient() => GlideClient.CreateClient(DefaultClientConfig().Build()).GetAwaiter().GetResult();
+    public static GlideClusterClient DefaultClusterClient() => GlideClusterClient.CreateClient(DefaultClusterClientConfig().Build()).GetAwaiter().GetResult();
 
     private static TheoryData<BaseClient> s_testClients = [];
 
@@ -49,8 +49,13 @@ public class TestConfiguration : IDisposable
 
     public static void ResetTestClients() => s_testClients = [];
 
+    private readonly StringWriter _output = new();
+
     public TestConfiguration()
     {
+        BaseClient.LOG = _output.WriteLine;
+        Console.SetOut(_output);
+
         string? projectDir = Directory.GetCurrentDirectory();
         while (!(Path.GetFileName(projectDir) == "csharp" || projectDir == null))
         {
@@ -88,11 +93,12 @@ public class TestConfiguration : IDisposable
         TestConsoleWriteLine($"Server version = {SERVER_VERSION}");
     }
 
-    ~TestConfiguration() => Dispose();
-
-    public void Dispose() =>
+    public void Dispose()
+    {
         // Stop all
         StopServer(true);
+        TestConsoleWriteLine(_output.ToString());
+    }
 
     private readonly string _scriptDir;
 

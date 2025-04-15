@@ -18,7 +18,7 @@ public abstract class BaseClient : IDisposable, IStringBaseCommands
 {
     public static Action<string> LOG = (str) => Trace.WriteLine(str);
 
-    public override string ToString() => $"{GetType().Name} {{ 0x{_clientPointer:X} }}";
+    //public override string ToString() => $"{GetType().Name} {{ 0x{_clientPointer:X} }}";
 
     #region public methods
     public async Task<string> Set(GlideString key, GlideString value)
